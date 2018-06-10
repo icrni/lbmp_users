@@ -4,13 +4,16 @@ import (
 	"database/sql"
 	"fmt"
 
+	// needed for sql driver
 	_ "github.com/mattn/go-sqlite3"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // User model
 type User struct {
-	name string
-	uuid string
+	Name string
+	uuid uuid.UUID
 }
 
 // Save user to DB
@@ -24,7 +27,7 @@ func (u *User) Save() {
 		panic(err)
 	}
 
-	res, err := stmt.Exec("123", "testtest")
+	res, err := stmt.Exec(&u.uuid, &u.Name)
 	if err != nil {
 		panic(err)
 	}

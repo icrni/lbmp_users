@@ -1,7 +1,9 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -24,10 +26,20 @@ func (a *App) Init() {
 }
 
 func (a *App) setRoutes() {
-	a.Router.HandleFunc("/", greet).Methods("GET")
+	a.Router.HandleFunc("/user", createUserHandle).Methods("POST")
 }
 
-func greet(w http.ResponseWriter, r *http.Request) {
-	user.CreateUser()
+func createUserHandle(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(string(body))
+	var t user.User
+	err = json.Unmarshal(body, &t)
+	if err != nil {
+		panic(err)
+	}
+	user.CreateUser(t.Name)
 	fmt.Fprintf(w, "Hello World! %s", time.Now())
 }
