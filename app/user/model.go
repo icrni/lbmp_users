@@ -12,8 +12,10 @@ import (
 
 // User model
 type User struct {
-	Name string
-	uuid uuid.UUID
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Username  string `json:"username"`
+	uuid      uuid.UUID
 }
 
 // Save user to DB
@@ -22,12 +24,12 @@ func (u *User) Save() {
 	if err != nil {
 		panic(err)
 	}
-	stmt, err := db.Prepare("INSERT INTO users(uuid, name) values(?,?)")
+	stmt, err := db.Prepare("INSERT INTO users(uuid, username) values(?,?)")
 	if err != nil {
 		panic(err)
 	}
 
-	res, err := stmt.Exec(&u.uuid, &u.Name)
+	res, err := stmt.Exec(&u.uuid, &u.Firstname)
 	if err != nil {
 		panic(err)
 	}

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/icrni/lbmp_users/app/user"
+	"github.com/thedevsaddam/govalidator"
 
 	"github.com/gorilla/mux"
 )
@@ -26,7 +27,7 @@ func (a *App) Init() {
 }
 
 func (a *App) setRoutes() {
-	a.Router.HandleFunc("/user", createUserHandle).Methods("POST")
+	a.Router.HandleFunc("/user", createUserHandlev2).Methods("POST")
 }
 
 func createUserHandle(w http.ResponseWriter, r *http.Request) {
@@ -40,6 +41,26 @@ func createUserHandle(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	user.CreateUser(t.Name)
+	user.CreateUser(t.Firstname)
 	fmt.Fprintf(w, "Hello World! %s", time.Now())
+}
+
+func createUserHandlev2(w http.ResponseWriter, r *http.Request) {
+	var t user.User
+	rules := govalidator.MapData{
+		"username": []string{"required", "between:5,15"},
+	}
+
+	opts := govalidator.Options{
+		Request: r,
+		Data:    &t,
+		Rules:   rules,
+	}
+
+	v := govalidator.New(opts)
+	e := v.ValidateJSON()
+	t.CreateUser()
+	err := map[string]interface{}{"validationError": e}
+	w.Header().Set("Content-type", "application/json")
+	json.NewEncoder(w).Encode(err)
 }

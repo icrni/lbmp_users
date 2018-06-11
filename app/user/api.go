@@ -7,14 +7,12 @@ import (
 )
 
 // CreateUser based on given data
-func CreateUser(name string) {
-	user := User{}
+func (u *User) CreateUser() {
 	uuid4, err := uuid.NewV4()
 	if err != nil {
 		fmt.Printf("Something went wrong: %s", err)
 		return
 	}
-	user.Name = name
-	user.uuid = uuid4
-	user.Save()
+	u.uuid = uuid4
+	u.Save()
 }
